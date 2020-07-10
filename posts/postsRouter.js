@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../data/db');
 
+/* ----- POST /api/posts ----- */
 router.post('/', (req, res) => {
   const date = new Date().toString();
 
@@ -29,6 +30,7 @@ router.post('/', (req, res) => {
     });
 });
 
+/* ----- POST /api/posts/:id/comments ----- */
 router.post('/:id/comments', (req, res) => {
   const date = new Date().toString();
 
@@ -63,6 +65,7 @@ router.post('/:id/comments', (req, res) => {
   });
 });
 
+/* ----- GET /api/posts ----- */
 router.get('/', (req, res) => {
   db.find()
     .then((posts) => {
@@ -72,6 +75,27 @@ router.get('/', (req, res) => {
       console.log(err);
       res.status(500).json({
         error: 'The posts information could not be retrieved'
+      });
+    });
+});
+
+/* ----- GET /api/posts/:id ----- */
+router.get('/:id', (req, res) => {
+  const { id } = req.params;
+
+  db.findById(id)
+    .then((post) => {
+      if (post.length === 0) {
+        res.status(404).json({
+          message: 'The post with the specified ID does not exist'
+        });
+      } else {
+        res.status(200).json(post);
+      }
+    })
+    .catch((err) => {
+      res.status(500).json({
+        error: 'The post information could not be retrieved'
       });
     });
 });
