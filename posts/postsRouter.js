@@ -3,7 +3,13 @@ const router = express.Router();
 const db = require('../data/db');
 
 router.post('/', (req, res) => {
-  const newPost = req.body;
+  const date = new Date().toString();
+
+  const newPost = {
+    ...req.body,
+    created_at: date,
+    updated_at: date
+  };
 
   if (!newPost.title || !newPost.contents) {
     res.status(400).json({
@@ -12,7 +18,7 @@ router.post('/', (req, res) => {
   }
 
   db.insert(newPost)
-    .then((id) => {
+    .then((post) => {
       res.status(201).json(newPost);
     })
     .catch((err) => {
